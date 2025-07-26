@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drug Inventory and Supply Chain Tracking System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+         :root {
+        --primary-color: #3498db;
+        --secondary-color: #2c3e50;
+        --background-color: #ecf0f1;
+        --text-color: #34495e;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        display: flex;
+      }
+
+      .navbar {
+        width: 60px;
+        height: 100vh;
+        background-color: var(--secondary-color);
+        transition: width 0.3s ease;
+        overflow: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+
+      .navbar.open {
+        width: 250px;
+      }
+
+      .navbar-toggle {
+        color: white;
+        font-size: 24px;
+        padding: 20px;
+        cursor: pointer;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .nav-item:hover {
+        background-color: var(--primary-color);
+      }
+
+      .nav-item i {
+        margin-right: 15px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .nav-text {
+        display: none;
+      }
+
+      .navbar.open .nav-text {
+        display: inline;
+      }
+
+      .main-content {
+        padding: 20px;
+        flex-grow: 1;
+      }
+
+      .hero {
+        text-align: center;
+        padding: 70px 0;
+      }
+
+      h1 {
+        font-size: 3.5em;
+        margin-bottom: 1.8rem;
+        color: #bde0f8;
+      }
+
+      .hero p {
+        font-size: 1.8em;
+        margin-bottom: 4.3rem;
+        color: whitesmoke;
+      }
+
+      .cta-button {
+        display: inline-block;
+        padding: 22px 23px;
+        font-size: 1.4rem;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s;
+        margin: 0 20px;
+      }
+
+      .cta-button:hover {
+        background-color: #2980b9;
+      }
+
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin-top: 40px;
+      }
+
+      .feature {
+        width: calc(33.33% - 20px);
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+      }
+
+      .feature h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+        color: var(--primary-color);
+      }
+
+      .feature p {
+        font-size: 1em;
+        line-height: 1.5;
+      }
+      video {
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        z-index: -1;
+        position: fixed;
+      }
+      .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-left: 1rem;
+            margin-top: 1rem;
+            color: cornsilk;
+        }
+        .feature img{
+            width: 100%;
+            height: 50%;
+        }
+        .features p{
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <video autoplay loop muted src="https://cdn.pixabay.com/video/2024/02/23/201735-916310640_tiny.mp4"></video>
+
+    <main class="main-content">
+        <div class="logo"><i class="fa-solid fa-truck-medical"></i> Pharmaa+</div>
+        <section class="hero">
+            <h1>Drug Inventory and Supply Chain Tracking System</h1>
+            <p>Streamline your drug supply chain with our advanced tracking and management system.</p>
+            <a href="login.html" class="cta-button" id="getStartedBtn">Get Started</a>
+            <a href="#" class="cta-button">Learn More</a>
+        </section>
+
+        <section class="features">
+            <div class="feature">
+                <h2>AI-Enhanced Drug Authenticity via Biometric Integration</h2>
+                <img src="./Images/biometric.png" alt="AI-Enhanced Drug Authenticity via Biometric Integration">
+                <p>Leverage AI to enhance drug authenticity using biometric authentication in packaging.</p>
+            </div>
+            <div class="feature">
+                <h2>AI to enhance Inventory Management Technology</h2>
+                <img src="./Images/imgai1.jpg" alt="Real-Time AI for Inventory Management">
+                <p>Efficiently manage your inventory with our advanced barcode system and analytics tools with the help of ai.</p>
+            </div>
+            <div class="feature">
+                <h2>Real-Time AI for Health Impact Forecasting</h2>
+                <img src="./Images/impactforecastin.png" alt="Real-Time AI for Health Impact Forecasting">
+                <p>Predict health impacts of delayed or compromised drug supply chains in real-time.</p>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

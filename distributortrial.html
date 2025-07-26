@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distributor Dashboard | Drug Inventory and Supply Chain Tracking System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a69bd;
+            --secondary-color: #6a89cc;
+            --background-color: #f1f2f6;
+            --text-color: #2f3542;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+        display: flex;
+        min-height: 100vh;
+        flex-direction: column;
+        padding-top: 1.5rem;
+        margin-left: 5rem;
+      }
+
+      .container h1 {
+        display: inline;
+        margin-bottom: 2rem;
+      }
+      .navbar {
+        width: 60px;
+        height: 100vh;
+        background-color: #34495e;
+        transition: width 0.3s ease;
+        overflow: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+      .navbar.open {
+        width: 250px;
+      }
+
+      .navbar-toggle {
+        color: white;
+        font-size: 24px;
+        padding: 20px;
+        cursor: pointer;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .nav-item:hover {
+        background-color: var(--primary-color);
+      }
+
+      .nav-item i {
+        margin-right: 15px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .nav-text {
+        display: none;
+      }
+
+      .navbar.open .nav-text {
+        display: inline;
+      }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .header h2 {
+            font-size: 28px;
+        }
+
+        .search-bar {
+            display: flex;
+        }
+
+        .search-bar input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .search-bar button {
+            padding: 8px 12px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard-card {
+            background-color: white;
+            border-radius: 4px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .dashboard-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #e0e0e0;
+            cursor: pointer;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .tab.active {
+            background-color: white;
+        }
+
+        .tab-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 0 4px 4px 4px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background-color: #f0f0f0;
+        }
+
+        .chart-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .chart {
+            width: 48%;
+        }
+
+        .alert {
+            background-color: #fef6e4;
+            border: 1px solid #ffd78a;
+            color: #8a6d3b;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .barcode-scanner {
+            background-color: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+            border-radius: 4px;
+        }
+
+        .barcode-scanner i {
+            font-size: 48px;
+            color: var(--primary-color);
+        }
+
+        .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item i {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="navbar-toggle">
+              <i class="fas fa-bars"></i>
+            </div>
+            <a href="#" class="nav-item">
+              <i class="fas fa-home"></i>
+              <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-truck"></i>
+              <span class="nav-text">Shipments</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-boxes"></i>
+              <span class="nav-text">Inventory</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-shopping-cart"></i>
+              <span class="nav-text">Orders</span>
+            </a>
+            
+            <a href="#" class="nav-item">
+                <i class="fas fa-bell"></i>
+              <span class="nav-text"> Notifications</span>
+            </a>
+            <a href="#" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+              <span class="nav-text"> Report</span>
+            </a>
+            <a href="#" class="nav-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="nav-text">Logout</span>
+            </a>
+          </nav>
+        <main class="main-content">
+            <header class="header">
+                <h2>Distributor Overview</h2>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+            </header>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Active Shipments</h3>
+                    <p>24 shipments</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Inventory Value</h3>
+                    <p>&#8377; 2,345,678</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Pending Orders</h3>
+                    <p>15 orders</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>On-Time Delivery Rate</h3>
+                    <p>98.7%</p>
+                </div>
+            </div>
+            <div class="tabs">
+                <div class="tab active" data-tab="shipments">Shipments</div>
+                <div class="tab" data-tab="inventory">Inventory</div>
+                <div class="tab" data-tab="orders">Orders</div>
+                <div class="tab" data-tab="notifications">Notifications</div>
+            </div>
+            <div class="tab-content">
+                <div id="shipments" class="tab-pane active">
+                    <h3>Active Shipments</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shipment ID</th>
+                                <th>Origin</th>
+                                <th>Destination</th>
+                                <th>Status</th>
+                                <th>ETA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>SHP001</td>
+                                <td>Warehouse A</td>
+                                <td>Pharmacy XYZ</td>
+                                <td>In Transit</td>
+                                <td>2023-06-18</td>
+                            </tr>
+                            <tr>
+                                <td>SHP002</td>
+                                <td>Manufacturer B</td>
+                                <td>Distribution Center</td>
+                                <td>Picked Up</td>
+                                <td>2023-06-20</td>
+                            </tr>
+                            <tr>
+                                <td>SHP003</td>
+                                <td>Distribution Center</td>
+                                <td>Hospital ABC</td>
+                                <td>Out for Delivery</td>
+                                <td>2023-06-16</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="chart-container">
+                        <div class="chart">
+                            <canvas id="shipmentStatusChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div id="inventory" class="tab-pane">
+                    <h3>Inventory Overview</h3>
+                    <div class="chart-container">
+                        <div class="chart">
+                            <canvas id="inventoryLevelsChart"></canvas>
+                        </div>
+                        <div class="chart">
+                            <canvas id="inventoryValueChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="barcode-scanner">
+                        <i class="fas fa-barcode"></i>
+                        <p>Scan product barcode for inventory update</p>
+                    </div>
+                </div>
+                <div id="orders" class="tab-pane">
+                    <h3>Recent Orders</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Total Items</th>
+                                <th>Total Value</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ORD001</td>
+                                <td>Pharmacy XYZ</td>
+                                <td>100</td>
+                                <td>&#8377; 5,000</td>
+                                <td>Processing</td>
+                            </tr>
+                            <tr>
+                                <td>ORD002</td>
+                                <td>Hospital ABC</td>
+                                <td>500</td>
+                                <td>&#8377; 25,000</td>
+                                <td>Shipped</td>
+                            </tr>
+                            <tr>
+                                <td>ORD003</td>
+                                <td>Clinic 123</td>
+                                <td>50</td>
+                                <td>&#8377; 2,500</td>
+                                <td>Delivered</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="chart-container">
+                        <div class="chart">
+                            <canvas id="orderTrendsChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                <div id="notifications" class="tab-pane">
+                    <h3>Recent Notifications</h3>
+                    <div class="notification-list">
+                        <div class="notification-item">
+                            <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i>
+                            Low stock alert: Aspirin (100mg) - 50 units remaining
+                        </div>
+                        <div class="notification-item">
+                            <i class="fas fa-truck" style="color: #3498db;"></i>
+                            Shipment SHP001 has been delivered to Pharmacy XYZ
+                        </div>
+                        <div class="notification-item">
+                            <i class="fas fa-calendar-check" style="color: #2ecc71;"></i>
+                            New order received: ORD004 from Hospital DEF
+                        </div>
+                        <div class="notification-item">
+                            <i class="fas fa-thermometer-half" style="color: #f39c12;"></i>
+                            Temperature alert: Shipment SHP002 exceeded recommended range
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="alerts">
+                <div class="alert">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Urgent: Recall notice for Batch XYZ123 of Medication A
+                </div>
+                <div class="alert">
+                    <i class="fas fa-info-circle"></i>
+                    System maintenance scheduled for tonight at 2:00 AM
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        document
+        .querySelector(".navbar-toggle")
+        .addEventListener("click", function () {
+          document.querySelector(".navbar").classList.toggle("open");
+        });
+           
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-pane');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const tabId = tab.getAttribute('data-tab');
+                
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tabId).classList.add('active');
+            });
+        });
+
+        // Shipment Status Chart
+        const shipmentStatusCtx = document.getElementById('shipmentStatusChart').getContext('2d');
+        new Chart(shipmentStatusCtx, {
+            type: 'pie',
+            data: {
+                labels: ['In Transit', 'Picked Up', 'Out for Delivery', 'Delivered'],
+                datasets: [{
+                    data: [12, 5, 3, 4],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Shipment Status Distribution'
+                    }
+                }
+            }
+        });
+
+        // Inventory Levels Chart
+        const inventoryLevelsCtx = document.getElementById('inventoryLevelsChart').getContext('2d');
+        new Chart(inventoryLevelsCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Aspirin', 'Ibuprofen', 'Amoxicillin', 'Lisinopril', 'Metformin'],
+                datasets: [{
+                    label: 'Current Stock',
+                    data: [15000, 12000, 8000, 10000, 9000],
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Units'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Current Inventory Levels'
+                    }
+                }
+            }
+        });
+
+        // Inventory Value Chart
+        const inventoryValueCtx = document.getElementById('inventoryValueChart').getContext('2d');
+        new Chart(inventoryValueCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Prescription Drugs', 'OTC Medications', 'Medical Supplies'],
+                datasets: [{
+                    data: [1200000, 800000, 345678],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Inventory Value Distribution'
+                    }
+                }
+            }
+        });
+
+        // Order Trends Chart
+        const orderTrendsCtx = document.getElementById('orderTrendsChart').getContext('2d');
+        new Chart(orderTrendsCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Order Volume',
+                    data: [65, 59, 80, 81, 56, 55],
+                    fill: false,
+                    borderColor: 'rgb(75, 192, 192)',
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Orders'
+                        }
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Order Trends'
+                    }
+                }
+            }
+        });
+
+        // Barcode Scanner Functionality (Simulated)
+        const barcodeScanner = document.querySelector('.barcode-scanner');
+        barcodeScanner.addEventListener('click', () => {
+            alert('Barcode scanned! Inventory updated.');
+        });
+
+        // Simulated Real-time Notifications
+        function addNotification(message, icon, color) {
+            const notificationList = document.querySelector('.notification-list');
+            const notificationItem = document.createElement('div');
+            notificationItem.classList.add('notification-item');
+            notificationItem.innerHTML = `
+                <i class="fas ${icon}" style="color: ${color};"></i>
+                ${message}
+            `;
+            notificationList.prepend(notificationItem);
+            
+            // Remove oldest notification if there are more than 10
+            if (notificationList.children.length > 10) {
+                notificationList.removeChild(notificationList.lastChild);
+            }
+        }
+
+        // Simulate incoming notifications
+        setInterval(() => {
+            const notifications = [
+                { message: 'New order received: ORD005 from Clinic 456', icon: 'fa-calendar-check', color: '#2ecc71' },
+                { message: 'Shipment SHP004 has been delayed due to weather', icon: 'fa-exclamation-circle', color: '#e74c3c' },
+                { message: 'Inventory count completed for Warehouse B', icon: 'fa-clipboard-check', color: '#3498db' }
+            ];
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            addNotification(randomNotification.message, randomNotification.icon, randomNotification.color);
+        }, 1000); // Add a new notification every 10 seconds
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  // In a real application, you'd also clear session data here
+  window.location.href = 'login.html';
+});
+    </script>
+</body>
+</html>

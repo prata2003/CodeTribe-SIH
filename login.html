@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Sign Up Form</title>
+    <style>
+          * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    /* background-image: linear-gradient(135deg, #f6d365 0%, #fda085 100%); */
+    background-image: url("./Images/imglogin.jpeg");
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    /* z-index: -1; */
+}
+body::before{
+    opacity: 0.6;
+}
+
+.container {
+    width: 350px;
+    padding: 40px;
+    border-radius: 15px;
+    position: relative;
+    perspective: 1000px;
+}
+
+.form-container {
+    width: 100%;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+}
+
+.form {
+    position: absolute;
+    top: -220px;
+    left: -35px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0,22.37);
+    /* 0.37 */
+    transition: backdrop-filter 0.6s ease, background-color 0.6s ease;
+    backface-visibility: hidden;
+    z-index: -1;
+    
+}
+
+.login-form {
+    transform: rotateY(0deg);
+}
+
+.signup-form {
+    transform: rotateY(180deg);
+    top: -284px;
+    left: 35px;
+}
+
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.3);
+    color: #000;
+}
+
+input::placeholder {
+    color: rgba(0, 0, 0, 0.6);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin: 20px 0;
+    background-color: rgba(255, 255, 255, 0.3);
+    border: none;
+    border-radius: 5px;
+    color: #000;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+p {
+    margin: 10px 0;
+}
+
+a {
+    color: #61dafb;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+.container.flipped .form-container {
+    transform: rotateY(180deg);
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: inherit;
+    filter: blur(50px);
+    z-index: -1;
+}
+    </style>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form login-form">
+                <h2>Login</h2>
+                <form id="loginForm">
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="Password" required>
+                    <button type="submit">Login</button>
+                    <p>Don't have an account? <a href="#" id="showSignUp">Sign Up</a></p>
+                </form>
+            </div>
+            <div class="form signup-form">
+                <h2>Sign Up</h2>
+                <form id="signupForm">
+                    <input type="text" placeholder="Full Name" required>
+                    <input type="email" placeholder="Email" required>
+                    <input type="password" placeholder="New Password" required>
+                    <input type="password" placeholder="Confirm Password" required>
+                    <select id="userType" required>
+                        <option value="" disabled selected>Select User Type</option>
+                        <option value="manufacturer">Manufacturer</option>
+                        <option value="stakeholder">Stakeholder</option>
+                        <option value="logistics_transport">Logistics & Transport</option>
+                        <option value="pharmacy">Pharmacy</option>
+                        <option value="distributor">Distributor</option>
+                    </select>
+                    <button type="submit">Sign Up</button>
+                    <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

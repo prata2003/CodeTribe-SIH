@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Logistics and Transport Dashboard | Drug Inventory and Supply Chain Tracking System
+    </title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      :root {
+        --primary-color: #2ecc71;
+        --secondary-color: #34495e;
+        --background-color: #ecf0f1;
+        --text-color: #2c3e50;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background-color: var(--background-color);
+        color: var(--text-color);
+        display: flex;
+      }
+
+      .navbar {
+        width: 60px;
+        height: 100vh;
+        background-color: var(--secondary-color);
+        transition: width 0.3s ease;
+        overflow: hidden;
+        position: fixed;
+        left: 0;
+        top: 0;
+      }
+
+      .navbar.open {
+        width: 250px;
+      }
+
+      .navbar-toggle {
+        color: white;
+        font-size: 24px;
+        padding: 20px;
+        cursor: pointer;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        padding: 15px 20px;
+        color: white;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .nav-item:hover {
+        background-color: var(--primary-color);
+      }
+
+      .nav-item i {
+        margin-right: 15px;
+        width: 20px;
+        text-align: center;
+      }
+
+      .nav-text {
+        display: none;
+      }
+
+      .navbar.open .nav-text {
+        display: inline;
+      }
+
+      .main-content {
+        margin-left: 60px;
+        padding: 20px;
+        flex-grow: 1;
+      }
+
+      h1 {
+        font-size: 2em;
+        margin-bottom: 20px;
+        color: var(--primary-color);
+      }
+
+      .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .dashboard-card {
+        background-color: white;
+        padding: 20px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .dashboard-card h2 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+        color: var(--primary-color);
+      }
+
+      .alert {
+        padding: 10px;
+        border-radius: 3px;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .alert i {
+        margin-right: 10px;
+        font-size: 20px;
+      }
+
+      .alert-success {
+        background-color: #d4edda;
+        color: #155724;
+      }
+
+      .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+      }
+
+      .alert-danger {
+        background-color: #f8d7da;
+        color: #721c24;
+      }
+
+      .barcode-scanner {
+        background-color: #f1f1f1;
+        padding: 20px;
+        text-align: center;
+        border-radius: 3px;
+      }
+
+      .barcode-scanner i {
+        font-size: 48px;
+        color: var(--primary-color);
+      }
+
+      .tracking-map {
+        height: 300px;
+        background-color: #ddd;
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 24px;
+        color: #777;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 10px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: var(--primary-color);
+        color: white;
+      }
+      .container {
+        width: 90%;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      .dashboard-item {
+        background-color: white;
+        border-radius: 5px;
+        padding: 1rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+      .dashboard-item h3 {
+        margin-bottom: 0.5rem;
+        color: #0077be;
+      }
+      .metric {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #0077be;
+      }
+      .map-container {
+        height: 400px;
+        background-image: url("./Images/imgmap.jpeg");
+        border-radius: 5px;
+        margin-bottom: 2rem;
+        position: relative;
+        overflow: hidden;
+        z-index: -1;
+      }
+      .map-marker {
+        width: 20px;
+        height: 20px;
+        background-color: blue;
+        border-radius: 50%;
+        position: absolute;
+        transition: all 0.5s ease;
+      }
+      .shipment-list {
+        background-color: white;
+        border-radius: 5px;
+        padding: 1rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+      .shipment-item {
+        padding: 0.5rem;
+        border-bottom: 1px solid #ddd;
+        transition: background-color 0.3s ease;
+      }
+      .shipment-item:hover {
+        background-color: cornflowerblue;
+      }
+      .status {
+        display: inline-block;
+        padding: 0.25rem 0.5rem;
+        border-radius: 3px;
+        font-size: 0.875rem;
+      }
+      .status-in-transit {
+        background-color: #ffc107;
+      }
+      .status-delivered {
+        background-color: #28a745;
+        color: white;
+      }
+      .status-delayed {
+        background-color: #dc3545;
+        color: white;
+      }
+      @media (max-width: 768px) {
+        .header-content {
+          flex-direction: column;
+        }
+        nav ul {
+          margin-top: 1rem;
+        }
+        .dashboard-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .notification-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 10px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item i {
+            margin-right: 10px;
+        }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div class="navbar-toggle">
+        <i class="fas fa-bars"></i>
+      </div>
+      <a href="#" class="nav-item">
+        <i class="fas fa-home"></i>
+        <span class="nav-text">Dashboard</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-truck"></i>
+        <span class="nav-text">Shipments</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-map-marked-alt"></i>
+        <span class="nav-text">Tracking</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-warehouse"></i>
+        <span class="nav-text">Inventory</span>
+      </a>
+      <a href="#" class="nav-item">
+        <i class="fas fa-chart-bar"></i>
+        <span class="nav-text">Reports</span>
+      </a>
+      <a href="#" class="nav-item" id="logoutBtn">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="nav-text">Logout</span>
+    </a>
+    </nav>
+
+    <main class="main-content">
+      <h1>Logistics and Transport Dashboard</h1>
+      <div class="container">
+        <div id="dashboard" class="dashboard">
+          <div class="dashboard-grid">
+            <div class="dashboard-item">
+              <h3>Active Shipments</h3>
+              <p class="metric">24</p>
+            </div>
+            <div class="dashboard-item">
+              <h3>On-Time Deliveries</h3>
+              <p class="metric">98%</p>
+            </div>
+            <div class="dashboard-item">
+              <h3>Alerts</h3>
+              <p class="metric">3</p>
+            </div>
+            <div class="dashboard-item">
+              <h3>Total Distance</h3>
+              <p class="metric">1,234 km</p>
+            </div>
+          </div>
+
+          <h2>Real-Time Shipment Tracking</h2>
+          <div class="map-container">
+            <div id="shipmentMarker" class="map-marker"></div>
+          </div>
+
+          <h2>Recent Shipments</h2>
+          <div class="shipment-list">
+            <div class="shipment-item">
+              <strong>SHP001</strong> - Aspirin (10,000 units)
+              <span class="status status-in-transit">In Transit</span>
+            </div>
+            <div class="shipment-item">
+              <strong>SHP002</strong> - Amoxicillin (5,000 units)
+              <span class="status status-delivered">Delivered</span>
+            </div>
+            <div class="shipment-item">
+              <strong>SHP003</strong> - Ibuprofen (8,000 units)
+              <span class="status status-delayed">Delayed</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h2>Shipment Status</h2>
+          <canvas id="shipmentChart"></canvas>
+        </div>
+        <div class="dashboard-card">
+          <h2>Inventory for Transport</h2>
+          <canvas id="inventoryChart"></canvas>
+        </div>
+        <div class="dashboard-card">
+          <h2>Real-time Tracking</h2>
+          <div class="tracking-map">[Real-time Tracking Map]</div>
+        </div>
+        <div class="dashboard-card">
+          <h2>Alert Notifications</h2>
+          <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i>
+            Shipment #1234 delivered successfully
+          </div>
+          <div class="alert alert-warning">
+            <i class="fas fa-exclamation-triangle"></i>
+            Shipment #5678 delayed due to weather
+          </div>
+          <div class="alert alert-danger">
+            <i class="fas fa-times-circle"></i>
+            Temperature breach in refrigerated truck #9012
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h2>Barcode Scanner</h2>
+          <div class="barcode-scanner">
+            <i class="fas fa-barcode"></i>
+            <p>Scan inventory for transport</p>
+          </div>
+        </div>
+        <div class="dashboard-card">
+          <h2>Recent Shipments</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Destination</th>
+                <th>Status</th>
+                <th>ETA</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#2468</td>
+                <td>New York</td>
+                <td>In Transit</td>
+                <td>2023-06-15</td>
+              </tr>
+              <tr>
+                <td>#1357</td>
+                <td>Los Angeles</td>
+                <td>Delivered</td>
+                <td>2023-06-10</td>
+              </tr>
+              <tr>
+                <td>#3690</td>
+                <td>Chicago</td>
+                <td>Preparing</td>
+                <td>2023-06-18</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div id="notifications" class="tab-pane">
+        <h3>Recent Notifications</h3>
+        <div class="notification-list">
+            <div class="notification-item">
+                <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i>
+                Low stock alert: Aspirin (100mg) - 50 units remaining
+            </div>
+            <div class="notification-item">
+                <i class="fas fa-truck" style="color: #3498db;"></i>
+                Shipment SHP001 has been delivered to Pharmacy XYZ
+            </div>
+            <div class="notification-item">
+                <i class="fas fa-calendar-check" style="color: #2ecc71;"></i>
+                New order received: ORD004 from Hospital DEF
+            </div>
+            <div class="notification-item">
+                <i class="fas fa-thermometer-half" style="color: #f39c12;"></i>
+                Temperature alert: Shipment SHP002 exceeded recommended range
+            </div>
+        </div>
+    </div>
+    </main>
+
+    <script>
+      document
+        .querySelector(".navbar-toggle")
+        .addEventListener("click", function () {
+          document.querySelector(".navbar").classList.toggle("open");
+        });
+
+      // Shipment Status Chart
+      const shipmentCtx = document
+        .getElementById("shipmentChart")
+        .getContext("2d");
+      new Chart(shipmentCtx, {
+        type: "bar",
+        data: {
+          labels: ["In Transit", "Delivered", "Delayed", "Preparing"],
+          datasets: [
+            {
+              label: "Shipment Status",
+              data: [12, 19, 3, 5],
+              backgroundColor: [
+                "rgba(54, 162, 235, 0.5)",
+                "rgba(75, 192, 192, 0.5)",
+                "rgba(255, 206, 86, 0.5)",
+                "rgba(255, 99, 132, 0.5)",
+              ],
+              borderColor: [
+                "rgba(54, 162, 235, 1)",
+                "rgba(75, 192, 192, 1)",
+                "rgba(255, 206, 86, 1)",
+                "rgba(255, 99, 132, 1)",
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true,
+            },
+          },
+        },
+      });
+
+      // Inventory for Transport Chart
+      const inventoryCtx = document
+        .getElementById("inventoryChart")
+        .getContext("2d");
+      new Chart(inventoryCtx, {
+        type: "pie",
+        data: {
+          labels: ["Ready for Transport", "In Transit", "Delivered"],
+          datasets: [
+            {
+              data: [300, 150, 100],
+              backgroundColor: [
+                "rgba(75, 192, 192, 0.5)",
+                "rgba(54, 162, 235, 0.5)",
+                "rgba(255, 99, 132, 0.5)",
+              ],
+              borderColor: [
+                "rgba(75, 192, 192, 1)",
+                "rgba(54, 162, 235, 1)",
+                "rgba(255, 99, 132, 1)",
+              ],
+              borderWidth: 1,
+            },
+          ],
+        },
+      });
+      // Simulated shipment movement
+      const shipmentMarker = document.getElementById("shipmentMarker");
+      let position = 0;
+      setInterval(() => {
+        position = (position + 1) % 100;
+        shipmentMarker.style.left = `${position}%`;
+        shipmentMarker.style.top = `${Math.sin(position / 10) * 20 + 50}%`;
+      }, 100);
+      const tabContents = document.querySelectorAll('.tab-pane');
+      // Simulated Real-time Notifications
+      function addNotification(message, icon, color) {
+            const notificationList = document.querySelector('.notification-list');
+            const notificationItem = document.createElement('div');
+            notificationItem.classList.add('notification-item');
+            notificationItem.innerHTML = `
+                <i class="fas ${icon}" style="color: ${color};"></i>
+                ${message}
+            `;
+            notificationList.prepend(notificationItem);
+            
+            // Remove oldest notification if there are more than 10
+            if (notificationList.children.length > 10) {
+                notificationList.removeChild(notificationList.lastChild);
+            }
+        }
+        // Simulate incoming notifications
+        setInterval(() => {
+            const notifications = [
+                { message: 'New order received: ORD005 from Clinic 456', icon: 'fa-calendar-check', color: '#2ecc71' },
+                { message: 'Shipment SHP004 has been delayed due to weather', icon: 'fa-exclamation-circle', color: '#e74c3c' },
+                { message: 'Inventory count completed for Warehouse B', icon: 'fa-clipboard-check', color: '#3498db' }
+            ];
+            const randomNotification = notifications[Math.floor(Math.random() * notifications.length)];
+            addNotification(randomNotification.message, randomNotification.icon, randomNotification.color);
+        }, 1000); // Add a new notification every 10 seconds
+        document.getElementById('logoutBtn').addEventListener('click', function(e) {
+  e.preventDefault();
+  // In a real application, you'd also clear session data here
+  window.location.href = 'login.html';
+});
+    </script>
+  </body>
+</html>
